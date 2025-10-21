@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Code, Trophy, Clock, CheckCircle2, Pause, Play, RotateCcw, Sparkles, Flame, Moon, Sun } from 'lucide-react';
+import { Analytics } from "@vercel/analytics/react"
+
+
 const codeSnippets = {
   python: [
     'def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)',
