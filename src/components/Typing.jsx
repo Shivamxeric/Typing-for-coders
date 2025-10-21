@@ -562,6 +562,8 @@ const DevTypingPractice = () => {
           </div>
         </div>
       </div>
+            <Analytics />
+
     </div>
   );
 };
