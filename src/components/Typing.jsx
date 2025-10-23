@@ -1,9 +1,6 @@
-
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Code, Trophy, Clock, CheckCircle2, Pause, Play, RotateCcw, Sparkles, Flame, Moon, Sun } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react"
-
 
 const codeSnippets = {
   python: [
@@ -156,8 +153,17 @@ const DevTypingPractice = () => {
   });
   const [currentTime, setCurrentTime] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [activeUsers, setActiveUsers] = useState(67);
   const inputRef = useRef(null);
   const pauseStartRef = useRef(null);
+
+  // Update active users every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveUsers(Math.floor(Math.random() * (100 - 50 + 1)) + 50);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     loadNewSnippet();
@@ -274,11 +280,11 @@ const DevTypingPractice = () => {
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
       {/* Header */}
-      <header className={`border-b ${isDark ? 'border-gray-800 bg-gray-900' : 'border-gray-200 bg-white'}`}>
+      <header className={`border-b ${isDark ? 'border-gray-800 bg-gray-900' : 'border-gray-200 bg-white'} sticky top-0 z-50 backdrop-blur-sm bg-opacity-95`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className={`p-2 rounded-lg ${isDark ? 'bg-blue-600' : 'bg-blue-500'}`}>
+              <div className={`p-2 rounded-lg ${isDark ? 'bg-blue-600' : 'bg-blue-500'} animate-pulse`}>
                 <Code className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -288,8 +294,17 @@ const DevTypingPractice = () => {
             </div>
             
             <div className="flex items-center space-x-4">
+              {/* Active Users Counter */}
+              <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg border ${isDark ? 'bg-green-500 bg-opacity-20 border-green-500' : 'bg-green-100 border-green-400'}`}>
+                <div className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </div>
+                <span className="font-bold text-green-500">{activeUsers} Active</span>
+              </div>
+              
               {streak > 0 && (
-                <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg border ${isDark ? 'bg-orange-500 bg-opacity-20 border-orange-500' : 'bg-orange-100 border-orange-400'}`}>
+                <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg border ${isDark ? 'bg-orange-500 bg-opacity-20 border-orange-500' : 'bg-orange-100 border-orange-400'} animate-bounce`}>
                   <Flame className="w-5 h-5 text-orange-500" />
                   <span className="font-bold">{streak} Streak!</span>
                 </div>
@@ -297,7 +312,7 @@ const DevTypingPractice = () => {
               
               <button
                 onClick={() => setIsDark(!isDark)}
-                className={`p-3 rounded-lg transition-all ${isDark ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
+                className={`p-3 rounded-lg transition-all transform hover:scale-110 ${isDark ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
               >
                 {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
@@ -380,14 +395,14 @@ const DevTypingPractice = () => {
               )}
 
               {/* Code Display */}
-              <div className={`relative rounded-lg p-4 mb-4 font-mono text-sm ${isDark ? 'bg-gray-900' : 'bg-white border border-gray-300'}`}>
-                <div className="whitespace-pre-wrap break-words">
+              <div className={`relative rounded-lg p-6 mb-4 font-mono text-lg ${isDark ? 'bg-gray-900' : 'bg-white border border-gray-300'}`}>
+                <div className="whitespace-pre-wrap break-words leading-relaxed">
                   {currentSnippet.split('').map((char, index) => {
                     const status = getCharStatus(index);
                     return (
                       <span
                         key={index}
-                        className={`${
+                        className={`font-bold ${
                           status === 'correct'
                             ? 'text-green-500'
                             : status === 'incorrect'
@@ -411,7 +426,7 @@ const DevTypingPractice = () => {
                 onChange={handleInputChange}
                 disabled={showResults}
                 placeholder="Start typing the code above..."
-                className={`w-full h-40 p-4 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full h-48 p-4 rounded-lg font-mono text-base resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   isDark
                     ? 'bg-gray-900 text-gray-100 border border-gray-700'
                     : 'bg-white text-gray-900 border border-gray-300'
@@ -562,8 +577,73 @@ const DevTypingPractice = () => {
           </div>
         </div>
       </div>
-            <Analytics />
 
+      {/* Footer */}
+      <footer className={`border-t ${isDark ? 'border-gray-800 bg-gray-900' : 'border-gray-200 bg-white'} mt-12`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* About */}
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <Code className="w-5 h-5 text-blue-500" />
+                <h3 className="font-bold text-lg">DevType</h3>
+              </div>
+              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                Master your coding speed with real programming language snippets. Practice, improve, and become a faster developer.
+              </p>
+            </div>
+
+            {/* Quick Stats */}
+            <div>
+              <h3 className="font-bold text-lg mb-4">Platform Stats</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Total Snippets:</span>
+                  <span className="font-bold text-blue-500">100+</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Languages:</span>
+                  <span className="font-bold text-blue-500">7</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Active Users:</span>
+                  <span className="font-bold text-green-500 transition-all duration-300">{activeUsers}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Links */}
+            <div>
+              <h3 className="font-bold text-lg mb-4">Quick Links</h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a href="#" className={`hover:text-blue-500 transition-colors ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    About DevType
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className={`hover:text-blue-500 transition-colors ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    How to Practice
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className={`hover:text-blue-500 transition-colors ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Keyboard Shortcuts
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className={`hover:text-blue-500 transition-colors ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Report Issue
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+  
+        </div>
+      </footer>
+      <Analytics/>
     </div>
   );
 };
