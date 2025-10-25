@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Code, Trophy, Clock, CheckCircle2, Pause, Play, RotateCcw, Sparkles, Flame, Moon, Sun } from 'lucide-react';
-import { Analytics } from "@vercel/analytics/react"
+import { Code, Trophy, Clock, CheckCircle2, Pause, Play, RotateCcw, Sparkles, Flame, Moon, Sun, Database } from 'lucide-react';
 
 const codeSnippets = {
   python: [
@@ -70,26 +69,26 @@ const codeSnippets = {
   typescript: [
     'interface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\nconst getUser = async (id: number): Promise<User> => {\n  const res = await fetch(`/users/${id}`);\n  return res.json();\n};',
     'type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };\n\nfunction divide(a: number, b: number): Result<number, string> {\n  if (b === 0) return { ok: false, error: "Div by zero" };\n  return { ok: true, value: a / b };\n}',
-    'enum Status {\n  Pending = "PENDING",\n  Active = "ACTIVE",\n  Completed = "COMPLETED"\n}\n\ninterface Task {\n  id: string;\n  title: string;\n  status: Status;\n}',
-    'type ApiResponse<T> = {\n  data: T;\n  status: number;\n  message: string;\n};\n\nconst handleResponse = <T>(res: ApiResponse<T>): T => {\n  if (res.status !== 200) throw new Error(res.message);\n  return res.data;\n};',
-    'class Observable<T> {\n  private observers: Array<(value: T) => void> = [];\n  \n  subscribe(observer: (value: T) => void): () => void {\n    this.observers.push(observer);\n    return () => {\n      this.observers = this.observers.filter(obs => obs !== observer);\n    };\n  }\n}',
+    'enum Status {\n  Pending = "PENDING",\n  Active = "ACTIVE",\n  Completed = "COMPLETED"\n}\n\ninterface Task {\n  id: string;\n  status: Status;\n}',
+    'class Observable<T> {\n  private observers: Array<(value: T) => void> = [];\n  subscribe(observer: (value: T) => void) {\n    this.observers.push(observer);\n  }\n}',
     'type DeepPartial<T> = {\n  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];\n};',
     'function memoize<T extends (...args: any[]) => any>(fn: T): T {\n  const cache = new Map();\n  return ((...args: any[]) => {\n    const key = JSON.stringify(args);\n    if (cache.has(key)) return cache.get(key);\n    const result = fn(...args);\n    cache.set(key, result);\n    return result;\n  }) as T;\n}',
-    'interface Logger {\n  log(message: string): void;\n  error(message: string): void;\n}\n\nclass ConsoleLogger implements Logger {\n  log(msg: string) { console.log(msg); }\n  error(msg: string) { console.error(msg); }\n}',
-    'type Nullable<T> = T | null;\ntype Optional<T> = T | undefined;\ntype Maybe<T> = Nullable<T> | Optional<T>;',
+    'interface Logger {\n  log(message: string): void;\n}\n\nclass ConsoleLogger implements Logger {\n  log(msg: string) { console.log(msg); }\n}',
+    'type Nullable<T> = T | null;\ntype Optional<T> = T | undefined;',
     'const processData = async <T>(items: T[]): Promise<T[]> => {\n  return items.filter(item => item !== null);\n};',
+    'class Stack<T> {\n  private items: T[] = [];\n  push(item: T) { this.items.push(item); }\n  pop() { return this.items.pop(); }\n}',
   ],
   java: [
     'public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}',
     'public class Person {\n    private String name;\n    private int age;\n    \n    public Person(String name, int age) {\n        this.name = name;\n        this.age = age;\n    }\n}',
-    'public interface Repository<T> {\n    void save(T entity);\n    T findById(Long id);\n    List<T> findAll();\n}',
-    'public class Calculator {\n    public int add(int a, int b) {\n        return a + b;\n    }\n    public int subtract(int a, int b) {\n        return a - b;\n    }\n}',
-    'try {\n    int result = 10 / 0;\n} catch (ArithmeticException e) {\n    System.out.println("Error: " + e.getMessage());\n}',
+    'public class Calculator {\n    public int add(int a, int b) {\n        return a + b;\n    }\n    public int multiply(int a, int b) {\n        return a * b;\n    }\n}',
+    'try {\n    int result = Integer.parseInt("abc");\n} catch (NumberFormatException e) {\n    System.out.println("Error: " + e.getMessage());\n}',
     'List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);\nList<Integer> squared = numbers.stream()\n    .map(n -> n * n)\n    .collect(Collectors.toList());',
-    'public enum Day {\n    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY\n}',
+    'public enum Day {\n    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY\n}',
     'public class Singleton {\n    private static Singleton instance;\n    private Singleton() {}\n    public static Singleton getInstance() {\n        if (instance == null) instance = new Singleton();\n        return instance;\n    }\n}',
-    'public class BinarySearch {\n    public static int search(int[] arr, int target) {\n        int left = 0, right = arr.length - 1;\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (arr[mid] == target) return mid;\n            if (arr[mid] < target) left = mid + 1;\n            else right = mid - 1;\n        }\n        return -1;\n    }\n}',
-    'public class LinkedList {\n    private Node head;\n    private class Node {\n        int data;\n        Node next;\n        Node(int data) { this.data = data; }\n    }\n}',
+    'public interface Repository<T> {\n    void save(T entity);\n    T findById(Long id);\n    List<T> findAll();\n}',
+    'public class LinkedList<T> {\n    private Node<T> head;\n    private static class Node<T> {\n        T data;\n        Node<T> next;\n    }\n}',
+    'public abstract class Animal {\n    protected String name;\n    public abstract String makeSound();\n}',
   ],
   cpp: [
     '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}',
@@ -101,17 +100,17 @@ const codeSnippets = {
     '#include <algorithm>\nvector<int> v = {3, 1, 4, 1, 5};\nsort(v.begin(), v.end());',
     'void swap(int& a, int& b) {\n    int temp = a;\n    a = b;\n    b = temp;\n}',
     '#include <map>\nmap<string, int> ages;\nages["Alice"] = 30;\nages["Bob"] = 25;',
-    'template <typename T>\nclass Stack {\nprivate:\n    vector<T> elements;\npublic:\n    void push(T elem) { elements.push_back(elem); }\n    T pop() { T elem = elements.back(); elements.pop_back(); return elem; }\n};',
+    'template <typename T>\nclass Stack {\nprivate:\n    vector<T> elements;\npublic:\n    void push(T elem) { elements.push_back(elem); }\n};',
   ],
   go: [
     'package main\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}',
     'func fibonacci(n int) int {\n    if n <= 1 {\n        return n\n    }\n    return fibonacci(n-1) + fibonacci(n-2)\n}',
-    'type Person struct {\n    Name string\n    Age  int\n}\n\nfunc (p Person) Greet() {\n    fmt.Printf("Hi, I\'m %s\\n", p.Name)\n}',
-    'func add(a, b int) int {\n    return a + b\n}\n\nresult := add(5, 3)\nfmt.Println(result)',
+    'type Person struct {\n    Name string\n    Age  int\n}\n\nfunc (p Person) Greet() string {\n    return "Hi, I am " + p.Name\n}',
+    'func add(a, b int) int {\n    return a + b\n}\n\nresult := add(5, 3)',
     'numbers := []int{1, 2, 3, 4, 5}\nfor _, num := range numbers {\n    fmt.Println(num)\n}',
     'func divide(a, b float64) (float64, error) {\n    if b == 0 {\n        return 0, errors.New("division by zero")\n    }\n    return a / b, nil\n}',
     'ch := make(chan int)\ngo func() {\n    ch <- 42\n}()\nvalue := <-ch',
-    'type Shape interface {\n    Area() float64\n}\n\ntype Circle struct {\n    Radius float64\n}\n\nfunc (c Circle) Area() float64 {\n    return 3.14 * c.Radius * c.Radius\n}',
+    'type Shape interface {\n    Area() float64\n}\n\ntype Circle struct {\n    Radius float64\n}',
     'defer func() {\n    if r := recover(); r != nil {\n        fmt.Println("Recovered:", r)\n    }\n}()',
     'var wg sync.WaitGroup\nfor i := 0; i < 5; i++ {\n    wg.Add(1)\n    go func(id int) {\n        defer wg.Done()\n        fmt.Println(id)\n    }(i)\n}\nwg.Wait()',
   ],
@@ -119,13 +118,61 @@ const codeSnippets = {
     'fn main() {\n    println!("Hello, world!");\n}',
     'fn fibonacci(n: u32) -> u32 {\n    match n {\n        0 => 0,\n        1 => 1,\n        _ => fibonacci(n - 1) + fibonacci(n - 2),\n    }\n}',
     'struct Rectangle {\n    width: u32,\n    height: u32,\n}\n\nimpl Rectangle {\n    fn area(&self) -> u32 {\n        self.width * self.height\n    }\n}',
-    'let numbers = vec![1, 2, 3, 4, 5];\nlet sum: i32 = numbers.iter().sum();\nprintln!("Sum: {}", sum);',
-    'enum Result<T, E> {\n    Ok(T),\n    Err(E),\n}\n\nfn divide(a: f64, b: f64) -> Result<f64, String> {\n    if b == 0.0 {\n        Err("Div by zero".to_string())\n    } else {\n        Ok(a / b)\n    }\n}',
-    'trait Drawable {\n    fn draw(&self);\n}\n\nstruct Circle {\n    radius: f64,\n}\n\nimpl Drawable for Circle {\n    fn draw(&self) {\n        println!("Drawing circle");\n    }\n}',
+    'let numbers = vec![1, 2, 3, 4, 5];\nlet sum: i32 = numbers.iter().sum();',
+    'enum Result<T, E> {\n    Ok(T),\n    Err(E),\n}',
+    'trait Drawable {\n    fn draw(&self);\n}\n\nstruct Circle {\n    radius: f64,\n}',
     'let v = vec![1, 2, 3];\nlet first = v.get(0);\nmatch first {\n    Some(value) => println!("{}", value),\n    None => println!("Empty"),\n}',
     'fn main() {\n    let numbers: Vec<i32> = (1..=10)\n        .filter(|x| x % 2 == 0)\n        .collect();\n}',
     'struct Point<T> {\n    x: T,\n    y: T,\n}\n\nimpl<T> Point<T> {\n    fn new(x: T, y: T) -> Self {\n        Point { x, y }\n    }\n}',
-    'use std::collections::HashMap;\n\nlet mut scores = HashMap::new();\nscores.insert("Alice", 95);\nscores.insert("Bob", 87);',
+    'use std::collections::HashMap;\n\nlet mut scores = HashMap::new();\nscores.insert("Alice", 95);',
+  ],
+  php: [
+    '<?php\nfunction greet($name) {\n    return "Hello, " . $name;\n}\necho greet("World");\n?>',
+    '<?php\nclass Person {\n    private $name;\n    private $age;\n    \n    public function __construct($name, $age) {\n        $this->name = $name;\n        $this->age = $age;\n    }\n}\n?>',
+    '<?php\n$numbers = [1, 2, 3, 4, 5];\n$squared = array_map(function($n) {\n    return $n * $n;\n}, $numbers);\n?>',
+    '<?php\ntry {\n    $result = 10 / 0;\n} catch (DivisionByZeroError $e) {\n    echo "Error: " . $e->getMessage();\n}\n?>',
+    '<?php\nfunction factorial($n) {\n    return ($n <= 1) ? 1 : $n * factorial($n - 1);\n}\n?>',
+    '<?php\n$fruits = ["apple", "banana", "orange"];\nforeach ($fruits as $fruit) {\n    echo $fruit . PHP_EOL;\n}\n?>',
+    '<?php\ninterface Logger {\n    public function log($message);\n}\n\nclass ConsoleLogger implements Logger {\n    public function log($message) {\n        echo $message;\n    }\n}\n?>',
+    '<?php\n$data = ["name" => "Alice", "age" => 30];\n$json = json_encode($data);\necho $json;\n?>',
+    '<?php\nfunction isEven($n) {\n    return $n % 2 === 0;\n}\n\n$numbers = [1, 2, 3, 4, 5];\n$even = array_filter($numbers, "isEven");\n?>',
+    '<?php\nabstract class Animal {\n    abstract public function makeSound();\n}\n\nclass Dog extends Animal {\n    public function makeSound() {\n        return "Woof!";\n    }\n}\n?>',
+  ],
+  ruby: [
+    'def greet(name)\n  puts "Hello, #{name}!"\nend\n\ngreet("World")',
+    'class Person\n  attr_accessor :name, :age\n  \n  def initialize(name, age)\n    @name = name\n    @age = age\n  end\nend',
+    'numbers = [1, 2, 3, 4, 5]\nsquared = numbers.map { |n| n * n }\nputs squared.inspect',
+    'def factorial(n)\n  return 1 if n <= 1\n  n * factorial(n - 1)\nend',
+    'fruits = ["apple", "banana", "orange"]\nfruits.each do |fruit|\n  puts fruit\nend',
+    'begin\n  result = 10 / 0\nrescue ZeroDivisionError => e\n  puts "Error: #{e.message}"\nend',
+    'class Animal\n  def initialize(name)\n    @name = name\n  end\n  \n  def speak\n    raise NotImplementedError\n  end\nend',
+    'hash = { name: "Alice", age: 30 }\nputs hash[:name]',
+    'def is_even?(n)\n  n % 2 == 0\nend\n\nnumbers = [1, 2, 3, 4, 5]\neven = numbers.select { |n| is_even?(n) }',
+    'module Greetable\n  def greet\n    "Hello from #{self.class.name}"\n  end\nend',
+  ],
+  swift: [
+    'func greet(name: String) -> String {\n    return "Hello, \\(name)!"\n}\n\nprint(greet(name: "World"))',
+    'struct Person {\n    var name: String\n    var age: Int\n    \n    func greet() -> String {\n        return "Hi, I am \\(name)"\n    }\n}',
+    'let numbers = [1, 2, 3, 4, 5]\nlet squared = numbers.map { $0 * $0 }',
+    'func factorial(_ n: Int) -> Int {\n    return n <= 1 ? 1 : n * factorial(n - 1)\n}',
+    'enum Result<T, E> {\n    case success(T)\n    case failure(E)\n}',
+    'class Animal {\n    var name: String\n    init(name: String) {\n        self.name = name\n    }\n}',
+    'protocol Drawable {\n    func draw()\n}\n\nstruct Circle: Drawable {\n    func draw() {\n        print("Drawing circle")\n    }\n}',
+    'let fruits = ["apple", "banana", "orange"]\nfor fruit in fruits {\n    print(fruit)\n}',
+    'func divide(_ a: Double, by b: Double) throws -> Double {\n    guard b != 0 else {\n        throw DivisionError.divisionByZero\n    }\n    return a / b\n}',
+    'let dict = ["name": "Alice", "age": "30"]\nif let name = dict["name"] {\n    print(name)\n}',
+  ],
+  kotlin: [
+    'fun main() {\n    println("Hello, World!")\n}',
+    'data class Person(val name: String, val age: Int)',
+    'fun greet(name: String): String {\n    return "Hello, $name!"\n}',
+    'val numbers = listOf(1, 2, 3, 4, 5)\nval squared = numbers.map { it * it }',
+    'fun factorial(n: Int): Int {\n    return if (n <= 1) 1 else n * factorial(n - 1)\n}',
+    'class Rectangle(val width: Int, val height: Int) {\n    fun area(): Int = width * height\n}',
+    'sealed class Result<out T> {\n    data class Success<T>(val value: T) : Result<T>()\n    data class Error(val message: String) : Result<Nothing>()\n}',
+    'interface Logger {\n    fun log(message: String)\n}\n\nclass ConsoleLogger : Logger {\n    override fun log(message: String) {\n        println(message)\n    }\n}',
+    'fun <T> List<T>.second(): T? {\n    return if (size >= 2) this[1] else null\n}',
+    'val fruits = listOf("apple", "banana", "orange")\nfruits.forEach { println(it) }',
   ],
 };
 
@@ -142,26 +189,48 @@ const DevTypingPractice = () => {
   const [stats, setStats] = useState({ wpm: 0, cpm: 0, accuracy: 0 });
   const [showResults, setShowResults] = useState(false);
   const [completedCount, setCompletedCount] = useState(0);
-  const [sessionStats, setSessionStats] = useState({
-    python: { best: 0, attempts: 0 },
-    javascript: { best: 0, attempts: 0 },
-    typescript: { best: 0, attempts: 0 },
-    java: { best: 0, attempts: 0 },
-    cpp: { best: 0, attempts: 0 },
-    go: { best: 0, attempts: 0 },
-    rust: { best: 0, attempts: 0 },
-  });
+  const [sessionStats, setSessionStats] = useState({});
   const [currentTime, setCurrentTime] = useState(0);
   const [streak, setStreak] = useState(0);
   const [activeUsers, setActiveUsers] = useState(67);
   const inputRef = useRef(null);
   const pauseStartRef = useRef(null);
 
+  // Initialize session stats for all languages
+  useEffect(() => {
+    const initialStats = {};
+    Object.keys(codeSnippets).forEach(lang => {
+      initialStats[lang] = { best: 0, attempts: 0 };
+    });
+    
+    // Load from localStorage
+    const saved = localStorage.getItem('devtype_stats');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setSessionStats(parsed);
+      const savedCompleted = localStorage.getItem('devtype_completed');
+      if (savedCompleted) setCompletedCount(parseInt(savedCompleted));
+      const savedStreak = localStorage.getItem('devtype_streak');
+      if (savedStreak) setStreak(parseInt(savedStreak));
+    } else {
+      setSessionStats(initialStats);
+    }
+  }, []);
+
+  // Save to localStorage whenever stats change
+  useEffect(() => {
+    if (Object.keys(sessionStats).length > 0) {
+      localStorage.setItem('devtype_stats', JSON.stringify(sessionStats));
+      localStorage.setItem('devtype_completed', completedCount.toString());
+      localStorage.setItem('devtype_streak', streak.toString());
+    }
+  }, [sessionStats, completedCount, streak]);
+
   // Update active users every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveUsers(Math.floor(Math.random() * (100 - 50 + 1)) + 50);
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -256,8 +325,8 @@ const DevTypingPractice = () => {
     setSessionStats(prev => ({
       ...prev,
       [selectedLang]: {
-        best: Math.max(prev[selectedLang].best, wpm),
-        attempts: prev[selectedLang].attempts + 1
+        best: Math.max(prev[selectedLang]?.best || 0, wpm),
+        attempts: (prev[selectedLang]?.attempts || 0) + 1
       }
     }));
   };
@@ -275,6 +344,21 @@ const DevTypingPractice = () => {
 
   const handleContinue = () => {
     loadNewSnippet();
+  };
+
+  const clearProgress = () => {
+    if (window.confirm('Are you sure you want to clear all progress?')) {
+      localStorage.removeItem('devtype_stats');
+      localStorage.removeItem('devtype_completed');
+      localStorage.removeItem('devtype_streak');
+      const initialStats = {};
+      Object.keys(codeSnippets).forEach(lang => {
+        initialStats[lang] = { best: 0, attempts: 0 };
+      });
+      setSessionStats(initialStats);
+      setCompletedCount(0);
+      setStreak(0);
+    }
   };
 
   return (
@@ -394,23 +478,24 @@ const DevTypingPractice = () => {
                 </div>
               )}
 
-              {/* Code Display */}
-              <div className={`relative rounded-lg p-6 mb-4 font-mono text-lg ${isDark ? 'bg-gray-900' : 'bg-white border border-gray-300'}`}>
-                <div className="whitespace-pre-wrap break-words leading-relaxed">
+              {/* Code Display - Enhanced */}
+              <div className={`relative rounded-lg p-6 mb-4 font-mono text-xl ${isDark ? 'bg-gray-900 border border-gray-700' : 'bg-white border-2 border-gray-300'}`}>
+                <div className="whitespace-pre-wrap break-words leading-loose tracking-wide">
                   {currentSnippet.split('').map((char, index) => {
                     const status = getCharStatus(index);
                     return (
                       <span
                         key={index}
-                        className={`font-bold ${
+                        className={`font-bold transition-all ${
                           status === 'correct'
                             ? 'text-green-500'
                             : status === 'incorrect'
-                            ? 'text-red-500 bg-red-500 bg-opacity-20'
+                            ? 'text-red-500 bg-red-500 bg-opacity-30 px-1 rounded'
                             : isDark
-                            ? 'text-gray-400'
-                            : 'text-gray-600'
+                            ? 'text-gray-300'
+                            : 'text-gray-700'
                         }`}
+                        style={{ fontSize: '1.15rem' }}
                       >
                         {char}
                       </span>
@@ -429,7 +514,7 @@ const DevTypingPractice = () => {
                 className={`w-full h-48 p-4 rounded-lg font-mono text-base resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   isDark
                     ? 'bg-gray-900 text-gray-100 border border-gray-700'
-                    : 'bg-white text-gray-900 border border-gray-300'
+                    : 'bg-white text-gray-900 border-2 border-gray-300'
                 } ${showResults ? 'opacity-50 cursor-not-allowed' : ''}`}
               />
             </div>
@@ -469,7 +554,7 @@ const DevTypingPractice = () => {
                 </button>
                 
                 <div className="mt-4 text-center text-sm opacity-75">
-                  Completed: {completedCount} / 30+ challenges
+                  Completed: {completedCount} challenges
                 </div>
               </div>
             )}
@@ -479,23 +564,25 @@ const DevTypingPractice = () => {
           <div className="space-y-6">
             {/* Progress Card */}
             <div className={`rounded-xl p-6 ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-              <div className="flex items-center space-x-2 mb-4">
-                <Sparkles className="w-5 h-5 text-yellow-500" />
-                <h3 className="font-bold text-lg">Session Progress</h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="w-5 h-5 text-yellow-500" />
+                  <h3 className="font-bold text-lg">Session Progress</h3>
+                </div>
+                <button
+                  onClick={clearProgress}
+                  className="text-xs text-red-500 hover:text-red-600"
+                >
+                  <Database className="w-4 h-4" />
+                </button>
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Completed</span>
                   <span className="font-bold text-2xl">{completedCount}</span>
                 </div>
-                <div className={`w-full rounded-full h-3 ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
-                  <div 
-                    className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500"
-                    style={{ width: `${Math.min((completedCount / 30) * 100, 100)}%` }}
-                  />
-                </div>
                 <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Keep going! No limit - practice as much as you want! 🚀
+                  Keep going! Practice as much as you want! 🚀
                 </div>
               </div>
             </div>
@@ -510,11 +597,11 @@ const DevTypingPractice = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Attempts</span>
-                  <span className="font-semibold">{sessionStats[selectedLang].attempts}</span>
+                  <span className="font-semibold">{sessionStats[selectedLang]?.attempts || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Best WPM</span>
-                  <span className="font-semibold text-green-500">{sessionStats[selectedLang].best || 0}</span>
+                  <span className="font-semibold text-green-500">{sessionStats[selectedLang]?.best || 0}</span>
                 </div>
               </div>
             </div>
@@ -572,6 +659,7 @@ const DevTypingPractice = () => {
                 <li>• Focus on accuracy over speed</li>
                 <li>• Practice different languages</li>
                 <li>• Build streak with 95%+ accuracy</li>
+                <li>• Progress is saved automatically</li>
               </ul>
             </div>
           </div>
@@ -603,7 +691,7 @@ const DevTypingPractice = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Languages:</span>
-                  <span className="font-bold text-blue-500">7</span>
+                  <span className="font-bold text-blue-500">{Object.keys(codeSnippets).length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Active Users:</span>
@@ -640,10 +728,16 @@ const DevTypingPractice = () => {
             </div>
           </div>
 
-  
+          <div className={`border-t ${isDark ? 'border-gray-800' : 'border-gray-200'} mt-8 pt-6 text-center`}>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              © 2025 DevType. Built with ❤️ for developers. Made by developers, for developers.
+            </p>
+            <p className={`text-xs mt-2 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+              Practice makes perfect • Keep coding • Stay awesome 🚀
+            </p>
+          </div>
         </div>
       </footer>
-      <Analytics/>
     </div>
   );
 };
